@@ -25,10 +25,7 @@ jobs:
             
             - name: Deploy to the VM
               run: |
-                printf "%s""${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
-                chmod 600 ~/ssh_key
-                ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/ssh_key ubuntu@3.86.200.163 -t "
-                docker stop user_backend || true && \
-                docker rm user_backend || true && \
-                docker run --name user_backend -d -p 8080:8080 sarthak100x/ci-cd-with-docker-backend:${{ github.sha }}"
-            
+                echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+                mkdir -p /home/runner/.ssh
+                chmod 700 /home/runner/ssh_key
+                ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@64.227.147.124 -t "docker stop user_backend && docker run --name user_backend -d -p 8080:8080 100xdevs/user-app-backend:${{ github.sha }}"
